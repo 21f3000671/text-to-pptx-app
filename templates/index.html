@@ -1,0 +1,103 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ app_name }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-light" style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <span class="navbar-brand fw-semibold">Text → PowerPoint</span>
+      <span class="navbar-text text-secondary small">Template-aware • Privacy-first</span>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h1 class="h4 mb-3">Your Text, Your Style — Auto-generate a deck from any template</h1>
+            <p class="text-secondary small mb-4">Paste your text or markdown, select an LLM, upload a .pptx/.potx file, and download a styled presentation. Keys are never stored.</p>
+
+            <form id="genForm">
+              <div class="mb-3">
+                <label class="form-label">Paste text / markdown</label>
+                <textarea class="form-control" name="text" rows="10" required placeholder="# Title\n\n## Section\n- point 1\n- point 2"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Optional guidance</label>
+                <input type="text" class="form-control" name="guidance" placeholder="e.g., turn into an investor pitch deck">
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Provider</label>
+                  <select class="form-select" name="provider">
+                    <option value="openai" selected>OpenAI (or compatible)</option>
+                    <option value="anthropic">Anthropic</option>
+                    <option value="gemini">Gemini</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Model</label>
+                  <input class="form-control" name="model" placeholder="e.g., gpt-4o-mini, claude-3-5-sonnet, gemini-1.5-pro">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">API key</label>
+                  <input class="form-control" name="api_key" type="password" required placeholder="sk-...">
+                </div>
+              </div>
+
+              <div class="mt-3 mb-3">
+                <label class="form-label">Custom Base URL (optional, for OpenAI-compatible)</label>
+                <input class="form-control" name="base_url" placeholder="https://api.openai.com/v1">
+                <div class="form-text">Leave blank for default provider API. Use this for self-hosted gateways.</div>
+              </div>
+
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="generate_notes" id="notesCheck">
+                <label class="form-check-label" for="notesCheck">Also generate speaker notes (LLM)</label>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Upload PowerPoint template / deck (.pptx/.potx)</label>
+                <input class="form-control" type="file" name="template_file" accept=".pptx,.potx" required>
+              </div>
+
+              <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-primary px-4" type="submit">Generate .pptx</button>
+                <div id="status" class="text-secondary small"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h2 class="h6">Tips</h2>
+            <ul class="small text-secondary ps-3">
+              <li>Use markdown headings (##) to pre-define slides.</li>
+              <li>Guidance reshapes content (e.g., “research summary” → intro, method, results).</li>
+              <li>Logos/backgrounds from your template are reused where possible.</li>
+              <li>We never store your keys or text.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

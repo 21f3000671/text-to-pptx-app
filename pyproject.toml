@@ -1,0 +1,36 @@
+[project]
+name = "text-to-pptx-app"
+version = "0.1.0"
+description = "Text → PowerPoint (Template-Aware) FastAPI app"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Contributors" }
+]
+keywords = ["fastapi", "pptx", "python-pptx", "llm", "presentation"]
+dependencies = [
+  "fastapi==0.116.1",
+  "uvicorn[standard]==0.35.0",
+  "jinja2==3.1.6",
+  "python-multipart==0.0.20",
+  "python-pptx==1.0.2",
+  "Pillow==11.3.0",
+  "litellm==1.76.0",
+]
+
+[tool.uv]
+# You can create a venv with: `uv venv`
+# Run without activating: `uv run uvicorn app.main:app --host 0.0.0.0 --port 8000`
+dev-dependencies = [
+  "pytest>=8.4.1",
+]
+
+# Optional: define Ruff/Black if you add them later
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
