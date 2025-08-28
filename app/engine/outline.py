@@ -101,7 +101,8 @@ async def build_outline_from_text(
     include_notes: bool = False,
 ) -> Dict[str, Any]:
     has_headings = bool(re.search(r"^\s{0,3}#{1,6}\s+", text, re.M))
-    if (not guidance and has_headings) or (not api_key):
+    # Only use fallback if no API key is provided
+    if not api_key:
         base = _fallback_outline(text, target_slide_count)
         if include_notes:
             for s in base["slides"]:
