@@ -52,9 +52,14 @@ def chat_json(
 
     try:
         data = json.loads(text)
-    except Exception:
+    except Exception as e1:
+        # Try to extract JSON from text using regex
         m = re.search(r"\{.*\}", text, re.S)
         if not m:
             raise ValueError(f"Model did not return JSON. Got: {text[:300]}...")
-        data = json.loads(m.group(0))
+        try:
+            data = json.loads(m.group(0))
+        except Exception as e2:
+            # If regex extraction also fails, raise the original error with more context
+            raise ValueError(f"Failed to parse JSON. Original error: {e1}. Regex extraction error: {e2}. Text: {text[:500]}...")
     return data

@@ -25,41 +25,50 @@ Rules:
 """
 
 def _fallback_outline(text: str, max_slides: int) -> Dict[str, Any]:
-    lines = text.splitlines()
-    slides = []
-    current = {"title": None, "bullets": []}
-    def flush():
-        if current["title"] or current["bullets"]:
-            slides.append({"title": current["title"] or "Slide", "bullets": current["bullets"][:8]})
-    for line in lines:
-        if re.match(r"^\s{0,3}#{1,6}\s+", line):
-            if len(slides) >= max_slides:
-                break
-            flush()
-            import re as _re
-            title = _re.sub(r"^\s*#+\s+", "", line).strip()
-            current = {"title": title[:120], "bullets": []}
-        elif re.match(r"^\s*[-*+]\s+", line):
-            bullet = re.sub(r"^\s*[-*+]\s+", "", line).strip()
-            if bullet:
-                current["bullets"].append(bullet[:160])
-        elif line.strip():
-            sentence = line.strip()
-            if len(sentence) > 180:
-                chunks = re.split(r"(?<=[.!?])\s+", sentence)
-                for c in chunks:
-                    c = c.strip()
-                    if c:
-                        current["bullets"].append(c[:160])
-            else:
-                current["bullets"].append(sentence[:160])
-    flush()
-    if not slides:
-        paras = [p.strip() for p in text.split("\\n\\n") if p.strip()]
-        for p in paras[:max_slides]:
-            slides.append({"title": p.split(".")[0][:80] if "." in p else "Slide", "bullets": [p[:160]]})
-    title = slides[0]["title"] if slides else "Presentation"
-    return {"title": title, "slides": slides[:max_slides]}
+    try:
+        lines = text.splitlines()
+        slides = []
+        current = {"title": None, "bullets": []}
+        def flush():
+            if current["title"] or current["bullets"]:
+                slides.append({"title": current["title"] or "Slide", "bullets": current["bullets"][:8]})
+        
+        for line in lines:
+            if re.match(r"^\s{0,3}#{1,6}\s+", line):
+                if len(slides) >= max_slides:
+                    break
+                flush()
+                import re as _re
+                title = _re.sub(r"^\s*#+\s+", "", line).strip()
+                current = {"title": title[:120], "bullets": []}
+            elif re.match(r"^\s*[-*+]\s+", line):
+                bullet = re.sub(r"^\s*[-*+]\s+", "", line).strip()
+                if bullet:
+                    current["bullets"].append(bullet[:160])
+            elif line.strip():
+                sentence = line.strip()
+                if len(sentence) > 180:
+                    chunks = re.split(r"(?<=[.!?])\s+", sentence)
+                    for c in chunks:
+                        c = c.strip()
+                        if c:
+                            current["bullets"].append(c[:160])
+                else:
+                    current["bullets"].append(sentence[:160])
+        flush()
+        if not slides:
+            paras = [p.strip() for p in text.split("\n\n") if p.strip()]
+            for p in paras[:max_slides]:
+                slides.append({"title": p.split(".")[0][:80] if "." in p else "Slide", "bullets": [p[:160]]})
+        title = slides[0]["title"] if slides else "Presentation"
+        return {"title": title, "slides": slides[:max_slides]}
+    except Exception as e:
+        print(f"Error in _fallback_outline: {e}")
+        # Return minimal safe fallback
+        return {
+            "title": "Presentation", 
+            "slides": [{"title": "Overview", "bullets": ["Content from input text"]}]
+        }
 
 def _normalize_outline(data: Any, max_slides: int, include_notes: bool) -> Dict[str, Any]:
     if not isinstance(data, dict):
@@ -127,7 +136,8 @@ async def build_outline_from_text(
             temperature=0.2,
         )
         data = _normalize_outline(data, target_slide_count, include_notes)
-    except Exception:
+    except Exception as e:
+        print(f"LLM outline generation failed: {str(e)}")
         data = _fallback_outline(text, target_slide_count)
         if include_notes:
             for s in data.get("slides", []):

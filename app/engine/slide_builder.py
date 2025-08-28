@@ -25,10 +25,21 @@ def _pick_layout(prs: Presentation) -> Tuple[int, int]:
 def _set_title(shape, text: str):
     try:
         if hasattr(shape, "text_frame") and shape.text_frame:
-            shape.text_frame.clear()
-            p = shape.text_frame.paragraphs[0]
-            p.text = text
-            p.alignment = PP_ALIGN.LEFT
+            tf = shape.text_frame
+            # Don't clear - this removes template formatting!
+            # Instead, work with the first paragraph
+            if tf.paragraphs:
+                p = tf.paragraphs[0]
+                p.text = text
+                # Keep template's alignment if it exists, otherwise center
+                if hasattr(p, 'alignment') and p.alignment is None:
+                    p.alignment = PP_ALIGN.CENTER
+            else:
+                # Fallback if no paragraphs exist
+                tf.clear()
+                p = tf.paragraphs[0]
+                p.text = text
+                p.alignment = PP_ALIGN.CENTER
     except Exception:
         pass
 
@@ -46,11 +57,16 @@ def _set_bullets_placeholder(placeholder, bullets: List[str]) -> bool:
         return False
     try:
         tf = placeholder.text_frame
-        tf.clear()
+        # Don't clear - preserve template styling
+        # Instead, work with existing paragraphs when possible
         for i, b in enumerate(bullets):
-            p = tf.add_paragraph() if i > 0 else tf.paragraphs[0]
+            if i == 0 and tf.paragraphs:
+                p = tf.paragraphs[0]
+            else:
+                p = tf.add_paragraph()
             p.text = b
             p.level = 0
+            # Preserve template bullet and font formatting
         return True
     except Exception:
         return False
