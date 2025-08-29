@@ -14,8 +14,10 @@ APP_NAME = "Text→PPTX (Template Aware)"
 app = FastAPI(title=APP_NAME)
 
 # Static & templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+templates = Jinja2Templates(directory=templates_dir)
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
