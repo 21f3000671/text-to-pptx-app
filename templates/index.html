@@ -27,7 +27,7 @@
             <h1 class="h4 mb-3">Your Text, Your Style — Auto-generate a deck from any template</h1>
             <p class="text-secondary small mb-4">Paste your text or markdown, select an LLM, upload a .pptx/.potx file, and download a styled presentation. Keys are never stored.</p>
 
-            <form id="genForm">
+            <form id="genForm" method="post" action="/generate" enctype="multipart/form-data">
               <div class="mb-3">
                 <label class="form-label">Paste text / markdown</label>
                 <textarea class="form-control" name="text" rows="10" required placeholder="# Title\n\n## Section\n- point 1\n- point 2"></textarea>
