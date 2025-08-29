@@ -89,6 +89,7 @@ async def generate(
         output_path,
         filename="generated.pptx",
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        headers={"Content-Disposition": "attachment; filename=generated.pptx"},
         background=BackgroundTask(_cleanup)
     )
 
