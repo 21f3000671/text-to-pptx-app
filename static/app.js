@@ -8,7 +8,7 @@ form.addEventListener("submit", async (e) => {
   const fd = new FormData(form);
 
   try {
-    const res = await fetch("/generate", { method: "POST", body: fd });
+    const res = await fetch(form.action, { method: "POST", body: fd });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       const msg = data.detail || `Server error (${res.status})`;
