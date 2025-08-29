@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.background import BackgroundTask
 from typing import Optional
 import uvicorn
@@ -12,6 +13,15 @@ from app.engine.slide_builder import build_presentation_from_outline
 
 APP_NAME = "Text→PPTX (Template Aware)"
 app = FastAPI(title=APP_NAME)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Static & templates
 static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
